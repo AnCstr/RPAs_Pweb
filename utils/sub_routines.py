@@ -154,11 +154,15 @@ def zip_files(novo_nome: str, folder_path: str) -> None:
 
 
 def verifica_downloads_finalizados(path: str, num_downloads: int) -> None:
+    count = 0
     while True:
         files = glob(f'{path}/*.pdf')
         if len(files) >= num_downloads:
             break
         time.sleep(0.5)
+        count += 1
+        if count >= 10:
+            raise ConnectionRefusedError
 
 
 def clean_cache(folder: str) -> None:

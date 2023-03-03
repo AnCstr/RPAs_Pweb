@@ -8,13 +8,13 @@ def main(instancia: int):
 
 
 if __name__ == "__main__":
-    pool = Pool(processes=6)
+    pool = Pool(processes=2)
     p1 = pool.apply_async(main, [1])
-    p2 = pool.apply_async(main, [2])
-    p3 = pool.apply_async(main, [3])
+    #  p2 = pool.apply_async(main, [2])
+    """p3 = pool.apply_async(main, [3])
     p4 = pool.apply_async(main, [4])
     p5 = pool.apply_async(main, [5])
-    p6 = pool.apply_async(main, [6])
+    p6 = pool.apply_async(main, [6])"""
 
     pool.close()
     pool.join()
