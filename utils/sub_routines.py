@@ -3,6 +3,8 @@ import zipfile
 from baserpa import base_selenium
 import time
 from glob import glob
+from getpass import getpass
+from typing import List, Any
 
 
 def login(pweb: base_selenium.NavegadorWeb) -> None:
@@ -12,7 +14,7 @@ def login(pweb: base_selenium.NavegadorWeb) -> None:
     """
     """username = input("Insira Usuario Processys: ")
     pwd = getpass("Informe Senha Processys: ")"""
-    username = "p-Alan.castro"
+    username = "p-Alan.Castro"
     pwd = "Alca0003*"
     pweb.inserir_texto("//input[@id='username']", texto=username)
     pweb.inserir_texto("//input[@id='password']", texto=pwd)
@@ -169,4 +171,37 @@ def clean_cache(folder: str) -> None:
     files = glob(f'{folder}/*')
     for file in files:
         os.remove(file)
+
+
+def sessao_expirada(pweb: base_selenium.NavegadorWeb) -> bool:
+    for j in range(1, 10):
+        pweb.aceita_alerta()
+
+    while True:
+        try:
+            pweb.navega_url("https://processys.saudepetrobras.com.br/ProcessUtilisWebService"
+                            "/app/view/movimentoOperacional/consultas/porLoteConta/")
+            login(pweb)
+            pweb.navega_url("https://processys.saudepetrobras.com.br/ProcessUtilisWebService"
+                            "/app/view/movimentoOperacional/consultas/porLoteConta/")
+            return True
+        except BaseException:
+            pass
+
+
+def split_list_sublists(lst: List[Any], num_parts: int) -> List[Any]:
+    """
+    Create a list of lists splited by the number of parts passed
+    :param lst: list to split
+    :param num_parts: parts that will split
+    :return: list of lists, splited
+    """
+    remainder = float(str(len(lst)/6 % 1)[:4])
+    rem_elements = round(remainder * 6)
+    rem_list = [lst.pop(n) for n in range(rem_elements)]
+    chunk_size = int(len(lst)/num_parts)
+    chunks = [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
+    chunks[-1] = chunks[-1] + rem_list
+
+    return chunks
 
