@@ -26,3 +26,6 @@ class Spliter:
             df = pd.DataFrame(data={"guia_recurso": lista})
             df.to_excel(f"{PATH_SPLITED}\\{idx}.xlsx", sheet_name="1")
 
+
+s = Spliter(2)
+s.separar()

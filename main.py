@@ -10,7 +10,8 @@ from typing import List, Any
 def main(instancia: int, batch_list: List[Any]):
     r = lote_conta.Routine()
     #  r.nav_and_download_docs(instancia)
-    r.guia_valor_info(instancia, batch_list)
+    #  r.guia_valor_info(instancia, batch_list)
+    r.pesquisa_guia_recurso_retorna_data_envio_e_valores(instancia, batch_list)
 
 
 def get_batch():

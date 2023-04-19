@@ -5,6 +5,8 @@ import time
 import datetime
 from selenium.common.exceptions import UnexpectedAlertPresentException
 from typing import List, Any
+import warnings
+import os
 
 
 id_folder = {
@@ -15,6 +17,9 @@ id_folder = {
     5: "C:\\temp\\kpmg\\anexos5",
     6: "C:\\temp\\kpmg\\anexos6",
 }
+
+
+warnings.warn("ignore")
 
 
 class Routine:
@@ -82,6 +87,7 @@ class Routine:
         sbr.login(pweb)
 
         for n, conta in enumerate(batch_list):
+            os.system("cls")
             start_time = int(time.time())
             conta = int(conta)
             try:
@@ -120,6 +126,7 @@ class Routine:
                                  })
         pweb = bsl.NavegadorWeb(url="https://processys.saudepetrobras.com.br/", fldr_id=instancia)
         sbr.login(pweb)
+        cnt = 0
 
         for n, conta in enumerate(batch_list):
             start_time = int(time.time())
@@ -153,7 +160,11 @@ class Routine:
                 exl["valor_cobrado"].loc[n] = valor_soli
                 exl["valor_pago"].loc[n] = valor_pago
 
-                exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+                cnt += 1
+                if cnt == 1000:
+                    exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+                    cnt = 0
+
                 print(f"Tempo de Execução: {datetime.timedelta(seconds=int(time.time()) - start_time)}")
             except UnexpectedAlertPresentException:
                 sbr.sessao_expirada(pweb)
