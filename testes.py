@@ -1,13 +1,13 @@
 import unittest
-from utils.split_excel import Diretorio
+from utils.split_excel import Spliter
 
 
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        self.diretorio = Diretorio()
+        self.spliter = Spliter()
 
     def test_something(self):
-        self.assertIsInstance(self.diretorio, Diretorio)
+        self.assertIsInstance(self.spliter, Spliter)
 
 
 if __name__ == '__main__':

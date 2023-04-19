@@ -19,13 +19,13 @@ id_folder = {
 }
 
 
-warnings.warn("ignore")
+warnings.simplefilter("ignore")
 
 
 class Routine:
     @staticmethod
     def nav_and_download_docs(instancia: int):
-        exl = pd.read_excel(f"C:\\temp\\kpmg\\kpmg{instancia}.xlsx", sheet_name=0, header=0, usecols=[1, 2])
+        exl = pd.read_excel(f"C:\\temp\\kpmg\\kpmg{instancia}.xlsx")
         exl = exl.rename(columns={"OK/NOK": "OK", "IDENTIFICAÇÃO_DO_EVENTO": "IDENTIFICACAO_DO_EVENTO"})
         pweb = bsl.NavegadorWeb(url="https://processys.saudepetrobras.com.br/", fldr_id=instancia)
         sbr.login(pweb)
@@ -48,7 +48,7 @@ class Routine:
                 status = sbr.entra_conta(pweb)
                 if status == "n_loc":
                     exl["OK"].loc[n] = "n_loc"
-                    exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", header=0, index=False)
+                    exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", index=False)
                     continue
 
                 reembolso = sbr.reembolso(pweb)
@@ -59,11 +59,11 @@ class Routine:
                 #  rotina paperless
                 if reembolso:
                     exl["OK"].loc[n] = "reembolso"
-                    exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", header=0, index=False)
+                    exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", index=False)
                     continue
                 elif paperless:
                     exl["OK"].loc[n] = "paperless"
-                    exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", header=0, index=False)
+                    exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", index=False)
                     continue
                 else:
                     sbr.btn_download(pweb)
@@ -75,9 +75,9 @@ class Routine:
                     exl["OK"].loc[n] = "Ok"
             except BaseException:
                 exl["OK"].loc[n] = "Erro"
-                exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", header=0, index=False)
+                exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", index=False)
 
-            exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", header=0, index=False)
+            exl.to_excel(f"c:\\temp\\kpmg\\retorno_kpmg_{instancia}.xlsx", index=False)
             print(f"Tempo de Execução: {datetime.timedelta(seconds=int(time.time()) - start_time)}")
 
     @staticmethod
@@ -85,15 +85,14 @@ class Routine:
         exl = pd.DataFrame(data={"guia_recurso": batch_list, "valor_cobrado": ""})
         pweb = bsl.NavegadorWeb(url="https://processys.saudepetrobras.com.br/", fldr_id=instancia)
         sbr.login(pweb)
+        pweb.navega_url("https://processys.saudepetrobras.com.br/ProcessUtilisWebService"
+                        "/app/view/movimentoOperacional/consultas/porLoteConta/")
 
         for n, conta in enumerate(batch_list):
             os.system("cls")
             start_time = int(time.time())
             conta = int(conta)
             try:
-                pweb.navega_url("https://processys.saudepetrobras.com.br/ProcessUtilisWebService"
-                                "/app/view/movimentoOperacional/consultas/porLoteConta/")
-
                 alert = sbr.pesquisa_conta(pweb, conta)
                 if alert != "ok":
                     exl["valor_cobrado"].loc[n] = alert
@@ -127,14 +126,15 @@ class Routine:
         pweb = bsl.NavegadorWeb(url="https://processys.saudepetrobras.com.br/", fldr_id=instancia)
         sbr.login(pweb)
         cnt = 0
+        pweb.navega_url("https://processys.saudepetrobras.com.br/ProcessUtilisWebService"
+                        "/app/view/movimentoOperacional/consultas/porLoteConta/")
 
         for n, conta in enumerate(batch_list):
+            os.system("cls")
             start_time = int(time.time())
+            print(n)
             conta = int(conta)
             try:
-                pweb.navega_url("https://processys.saudepetrobras.com.br/ProcessUtilisWebService"
-                                "/app/view/movimentoOperacional/consultas/porLoteConta/")
-
                 alert = sbr.pesquisa_conta(pweb, conta)
                 if alert != "ok":
                     exl["data_envio"].loc[n] = alert
