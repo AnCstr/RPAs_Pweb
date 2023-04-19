@@ -80,10 +80,10 @@ class Routine:
         exl = pd.DataFrame(data={"guia_recurso": batch_list, "valor_cobrado": ""})
         pweb = bsl.NavegadorWeb(url="https://processys.saudepetrobras.com.br/", fldr_id=instancia)
         sbr.login(pweb)
-        exl["OK"] = ""
 
         for n, conta in enumerate(batch_list):
             start_time = int(time.time())
+            conta = int(conta)
             try:
                 pweb.navega_url("https://processys.saudepetrobras.com.br/ProcessUtilisWebService"
                                 "/app/view/movimentoOperacional/consultas/porLoteConta/")
@@ -109,3 +109,54 @@ class Routine:
                 sbr.sessao_expirada(pweb)
                 exl["valor_cobrado"].loc[n] = "Erro"
                 exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+
+
+    @staticmethod
+    def pesquisa_guia_recurso_retorna_data_envio_e_valores(instancia: int, batch_list: List[Any]):
+        exl = pd.DataFrame(data={"guia_recurso": batch_list,
+                                 "data_envio": "",
+                                 "valor_cobrado": "",
+                                 "valor_pago": ""
+                                 })
+        pweb = bsl.NavegadorWeb(url="https://processys.saudepetrobras.com.br/", fldr_id=instancia)
+        sbr.login(pweb)
+
+        for n, conta in enumerate(batch_list):
+            start_time = int(time.time())
+            conta = int(conta)
+            try:
+                pweb.navega_url("https://processys.saudepetrobras.com.br/ProcessUtilisWebService"
+                                "/app/view/movimentoOperacional/consultas/porLoteConta/")
+
+                alert = sbr.pesquisa_conta(pweb, conta)
+                if alert != "ok":
+                    exl["data_envio"].loc[n] = alert
+                    exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+
+                if pweb.carregou("//td[@aria-describedby='porLoteConta_grid_numeroGuiaPrestadorFmt']"):
+                    exl["data_envio"].loc[n] = "N_Loc"
+                    exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+
+                data_envio = pweb.retorna_innertext_xpath(
+                    "//td[@aria-describedby='porLoteConta_grid_dataEmissaoGuiaFmt']",
+                    txt=True)
+
+                valor_soli = pweb.retorna_innertext_xpath(
+                    "//td[@aria-describedby='porLoteConta_grid_valorInformadoGuia']",
+                    txt=True)
+
+                valor_pago = pweb.retorna_innertext_xpath(
+                    "//td[@aria-describedby='porLoteConta_grid_valorPagamento']",
+                    txt=True)
+
+                exl["data_envio"].loc[n] = data_envio
+                exl["valor_cobrado"].loc[n] = valor_soli
+                exl["valor_pago"].loc[n] = valor_pago
+
+                exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+                print(f"Tempo de Execução: {datetime.timedelta(seconds=int(time.time()) - start_time)}")
+            except UnexpectedAlertPresentException:
+                sbr.sessao_expirada(pweb)
+                exl["data_envio"].loc[n] = "Erro"
+                exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+
