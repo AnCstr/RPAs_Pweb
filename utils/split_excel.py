@@ -9,7 +9,7 @@ PATH_SPLITED = "c:\\temp\\splited_dfs"
 
 
 class Spliter:
-    def __int__(self, partes: int):
+    def __init__(self, partes: int):
         self.__partes = partes
 
     @staticmethod
