@@ -3,7 +3,7 @@ from baserpa import base_selenium as bsl
 from utils import sub_routines as sbr
 import time
 import datetime
-from selenium.common.exceptions import UnexpectedAlertPresentException
+from selenium.common.exceptions import UnexpectedAlertPresentException, TimeoutException
 from typing import List, Any
 import warnings
 import os
@@ -143,17 +143,22 @@ class Routine:
                     exl["data_envio"].loc[n] = "N_Loc"
                     exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
 
-                data_envio = pweb.retorna_innertext_xpath(
-                    "//td[@aria-describedby='porLoteConta_grid_dataEmissaoGuiaFmt']",
-                    txt=True)
+                try:
+                    data_envio = pweb.retorna_innertext_xpath(
+                        "//td[@aria-describedby='porLoteConta_grid_dataEmissaoGuiaFmt']",
+                        txt=True)
 
-                valor_soli = pweb.retorna_innertext_xpath(
-                    "//td[@aria-describedby='porLoteConta_grid_valorInformadoGuia']",
-                    txt=True)
+                    valor_soli = pweb.retorna_innertext_xpath(
+                        "//td[@aria-describedby='porLoteConta_grid_valorInformadoGuia']",
+                        txt=True)
 
-                valor_pago = pweb.retorna_innertext_xpath(
-                    "//td[@aria-describedby='porLoteConta_grid_valorPagamento']",
-                    txt=True)
+                    valor_pago = pweb.retorna_innertext_xpath(
+                        "//td[@aria-describedby='porLoteConta_grid_valorPagamento']",
+                        txt=True)
+                except TimeoutException:
+                    exl["data_envio"].loc[n] = "N_Loc"
+                    exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+                    continue
 
                 exl["data_envio"].loc[n] = data_envio
                 exl["valor_cobrado"].loc[n] = valor_soli
