@@ -133,7 +133,6 @@ class Routine:
             os.system("cls")
             start_time = int(time.time())
             print(n)
-            conta = int(conta)
             try:
                 alert = sbr.pesquisa_conta(pweb, conta)
                 if alert != "ok":
