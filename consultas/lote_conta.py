@@ -82,15 +82,17 @@ class Routine:
 
     @staticmethod
     def guia_valor_info(instancia: int, batch_list: List[Any]):
-        exl = pd.DataFrame(data={"guia_recurso": batch_list, "valor_cobrado": ""})
+        exl = pd.DataFrame(data={"guia_recurso": batch_list, "valor_cobrado": "", "valor_pago": ""})
         pweb = bsl.NavegadorWeb(url="https://processys.saudepetrobras.com.br/", fldr_id=instancia)
         sbr.login(pweb)
         pweb.navega_url("https://processys.saudepetrobras.com.br/ProcessUtilisWebService"
                         "/app/view/movimentoOperacional/consultas/porLoteConta/")
+        cnt = 0
 
         for n, conta in enumerate(batch_list):
             os.system("cls")
             start_time = int(time.time())
+            print(n)
             conta = int(conta)
             try:
                 alert = sbr.pesquisa_conta(pweb, conta)
@@ -102,18 +104,31 @@ class Routine:
                     exl["valor_cobrado"].loc[n] = "N_Loc"
                     exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
 
-                valor_soli = pweb.retorna_innertext_xpath(
+                """valor_soli = pweb.retorna_innertext_xpath(
                     "//td[@aria-describedby='porLoteConta_grid_valorInformadoGuia']",
                     txt=True)
+                valor_pago = pweb.retorna_innertext_xpath(
+                    "//td[@aria-describedby='porLoteConta_grid_valorPagamento']",
+                    txt=True)"""
+                valor_soli = pweb.retorna_value_xpath(
+                    "//input[@id='porLoteConta_quantidadeGuiaLoteInformadoSoma']")
+                valor_pago = pweb.retorna_value_xpath(
+                    "//input[@id='porLoteConta_totalPago']")
 
                 exl["valor_cobrado"].loc[n] = valor_soli
+                exl["valor_pago"].loc[n] = valor_pago
 
-                exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+                cnt += 1
+                if cnt == 100:
+                    exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+                    cnt = 0
                 print(f"Tempo de Execução: {datetime.timedelta(seconds=int(time.time()) - start_time)}")
             except UnexpectedAlertPresentException:
                 sbr.sessao_expirada(pweb)
                 exl["valor_cobrado"].loc[n] = "Erro"
                 exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
+
+        exl.to_excel(f"C:\\temp\\data_{instancia}.xlsx", index=False, float_format="%.2f")
 
 
     @staticmethod

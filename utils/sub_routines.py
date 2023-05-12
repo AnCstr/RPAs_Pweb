@@ -16,8 +16,8 @@ def login(pweb: base_selenium.NavegadorWeb) -> None:
     pwd = getpass("Informe Senha Processys: ")"""
     """username = "p-Alan.Castro"
     pwd = "Alca0004*"""
-    username = "p-dayanne.lyrio"
-    pwd = "@Luna2023"
+    username = "P-filiphe.peixoto"
+    pwd = "Liphe2312*"
     pweb.inserir_texto("//input[@id='username']", texto=username)
     pweb.inserir_texto("//input[@id='password']", texto=pwd)
     pweb.send_enter("//input[@id='username']")
@@ -49,7 +49,7 @@ def ok_popup(pweb: base_selenium.NavegadorWeb) -> None:
 
 def pesquisa_conta(pweb: base_selenium.NavegadorWeb, num_conta: int) -> str:
     pweb.duplo_clique_xpath("//input[@id='porLoteConta_btnLimpar']")
-    pweb.inserir_texto("//input[@id='porLoteConta_numeroConta']", texto=num_conta)
+    pweb.inserir_texto("//input[@id='porLoteConta_numeroProtocolo']", texto=num_conta)
     pweb.duplo_clique_xpath("//input[@id='porLote_btnBuscarConta']")
     cont = 0
 

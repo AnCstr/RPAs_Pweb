@@ -10,8 +10,8 @@ from typing import List, Any
 def main(instancia: int, batch_list: List[Any]):
     r = lote_conta.Routine()
     #  r.nav_and_download_docs(instancia)
-    #  r.guia_valor_info(instancia, batch_list)
-    r.pesquisa_guia_recurso_retorna_data_envio_e_valores(instancia, batch_list)
+    r.guia_valor_info(instancia, batch_list)
+    #  r.pesquisa_guia_recurso_retorna_data_envio_e_valores(instancia, batch_list)
 
 
 def get_batch():
@@ -26,11 +26,11 @@ if __name__ == "__main__":
     batch = get_batch()
     pool = Pool(processes=6)
     p1 = pool.apply_async(main, [1, batch[0]])
-    p2 = pool.apply_async(main, [2, batch[1]])
+    """p2 = pool.apply_async(main, [2, batch[1]])
     p3 = pool.apply_async(main, [3, batch[2]])
     p4 = pool.apply_async(main, [4, batch[3]])
     p5 = pool.apply_async(main, [5, batch[4]])
-    p6 = pool.apply_async(main, [6, batch[5]])
+    p6 = pool.apply_async(main, [6, batch[5]])"""
 
     pool.close()
     pool.join()
